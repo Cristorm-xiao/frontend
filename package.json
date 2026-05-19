@@ -1,0 +1,28 @@
+{
+  "name": "hotel-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:client": "npm --prefix apps/client run dev",
+    "dev:staff": "npm --prefix apps/staff-admin run dev",
+    "build:client": "npm --prefix apps/client run build",
+    "build:staff": "npm --prefix apps/staff-admin run build",
+    "build": "npm run build:client && npm run build:staff",
+    "preview:client": "npm --prefix apps/client run preview",
+    "preview:staff": "npm --prefix apps/staff-admin run preview"
+  },
+  "dependencies": {
+    "lucide-vue-next": "^0.468.0",
+    "vue": "^3.4.31",
+    "vue-router": "^4.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "4.6.2",
+    "vite": "4.5.3"
+  }
+}
