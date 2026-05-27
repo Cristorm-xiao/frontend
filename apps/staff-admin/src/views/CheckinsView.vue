@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { RefreshCw, Trash2 } from 'lucide-vue-next'
-import { api, checkinStatusLabel, formatDateTime, formatMoney, pageList, roomStatusLabel, roomStatuses, roomTypeLabel } from '@shared'
+import { api, checkinStatusLabel, checkinStatuses, formatDateTime, formatMoney, pageList, roomStatusLabel, roomStatuses, roomTypeLabel } from '@shared'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 
@@ -26,6 +26,13 @@ const roomFilter = ref('')
 const filteredRooms = computed(() => {
   if (!roomFilter.value) return rooms.value
   return rooms.value.filter((room) => room.status === roomFilter.value)
+})
+
+const checkinFilter = ref('')
+
+const filteredCheckins = computed(() => {
+  if (!checkinFilter.value) return checkins.value
+  return checkins.value.filter((row) => row.status === checkinFilter.value)
 })
 
 function tone(status) {
@@ -129,6 +136,17 @@ onMounted(() => {
 
   <section class="grid content-grid">
     <div>
+      <div class="toolbar">
+        <label class="field" style="min-width: 160px;">
+          <span>状态</span>
+          <select v-model="checkinFilter">
+            <option value="">全部</option>
+            <option v-for="s in checkinStatuses" :key="s.value" :value="s.value">
+              {{ s.label }}
+            </option>
+          </select>
+        </label>
+      </div>
       <table class="data-table">
         <thead>
           <tr>
@@ -142,7 +160,7 @@ onMounted(() => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="row in checkins" :key="row.id">
+          <tr v-for="row in filteredCheckins" :key="row.id">
             <td>{{ row.id }}</td>
             <td>{{ row.user?.username || row.user_id }}</td>
             <td>{{ row.room?.room_number || row.room_id }}</td>
@@ -162,7 +180,7 @@ onMounted(() => {
           </tr>
         </tbody>
       </table>
-      <div v-if="!checkins.length" class="empty">暂无入住记录</div>
+      <div v-if="!filteredCheckins.length" class="empty">暂无入住记录</div>
       <div class="pagination">
         <button class="ghost-button" type="button" :disabled="page <= 1" @click="page--; load()">上一页</button>
         <span>第 {{ page }} 页 / 共 {{ total }} 条</span>

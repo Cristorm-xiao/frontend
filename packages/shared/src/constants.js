@@ -20,6 +20,7 @@ export const orderStatuses = [
 ]
 
 export const checkinStatuses = [
+  { label: '已取消', value: 'cancelled' },
   { label: '进行中', value: 'active' },
   { label: '已完成', value: 'completed' }
 ]

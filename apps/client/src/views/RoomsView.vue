@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { BedDouble, RefreshCw } from 'lucide-vue-next'
-import { api, formatMoney, pageList, roomStatusLabel, roomStatuses, roomTypeLabel, roomTypes } from '@shared'
+import { api, formatMoney, pageList, roomStatusLabel, roomTypeLabel, roomTypes } from '@shared'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 
@@ -12,7 +12,7 @@ const loading = ref(false)
 const error = ref('')
 const success = ref('')
 const selectedRoom = ref(null)
-const filters = reactive({ type: '', status: '' })
+const filters = reactive({ type: '' })
 const booking = reactive({
   guest_count: 2,
   room_type_preference: 'standard',
@@ -25,8 +25,7 @@ const today = new Date().toISOString().split('T')[0]
 const filteredRooms = computed(() =>
   rooms.value.filter((room) => {
     const byType = !filters.type || room.type === filters.type
-    const byStatus = !filters.status || room.status === filters.status
-    return byType && byStatus
+    return byType
   })
 )
 
@@ -106,13 +105,6 @@ onMounted(load)
       <select v-model="filters.type">
         <option value="">全部</option>
         <option v-for="type in roomTypes" :key="type.value" :value="type.value">{{ type.label }}</option>
-      </select>
-    </label>
-    <label class="field">
-      <span>状态</span>
-      <select v-model="filters.status">
-        <option value="">全部</option>
-        <option v-for="status in roomStatuses" :key="status.value" :value="status.value">{{ status.label }}</option>
       </select>
     </label>
   </div>
