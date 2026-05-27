@@ -12,7 +12,7 @@ const loading = ref(true)
 const error = ref('')
 
 const vacantRooms = computed(() => rooms.value.filter((room) => room.status === 'vacant').length)
-const activeOrders = computed(() => orders.value.filter((order) => ['pending', 'confirmed'].includes(order.status)).length)
+const activeOrders = computed(() => orders.value.filter((order) => order.status === 'pending').length)
 
 function roomTone(status) {
   if (status === 'vacant') return 'good'
@@ -59,7 +59,7 @@ onMounted(load)
       <div class="stat-value">{{ vacantRooms }}</div>
     </article>
     <article class="card">
-      <span>进行中订单</span>
+      <span>待确认订单</span>
       <div class="stat-value">{{ activeOrders }}</div>
     </article>
     <article class="card">

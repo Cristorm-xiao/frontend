@@ -6,6 +6,8 @@ import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 
 const checkins = ref([])
+const guests = ref([])
+const rooms = ref([])
 const page = ref(1)
 const total = ref(0)
 const error = ref('')
@@ -16,6 +18,8 @@ const form = reactive({
   room_id: '',
   expected_checkout_time: ''
 })
+
+const today = new Date().toISOString().slice(0, 16)
 
 function tone(status) {
   return status === 'active' ? 'good' : 'neutral'
@@ -32,6 +36,24 @@ async function load() {
   }
 }
 
+async function loadGuests() {
+  try {
+    const payload = pageList(await api.listGuests({ page: 1, page_size: 100 }))
+    guests.value = payload.list
+  } catch (err) {
+    console.error('加载住户失败:', err)
+  }
+}
+
+async function loadRooms() {
+  try {
+    const payload = pageList(await api.listRooms({ page: 1, page_size: 100 }))
+    rooms.value = payload.list
+  } catch (err) {
+    console.error('加载房间失败:', err)
+  }
+}
+
 function toRFC3339(value) {
   if (!value) return ''
   return new Date(value).toISOString()
@@ -42,10 +64,10 @@ async function createCheckin() {
   success.value = ''
   const body = {
     user_id: Number(form.user_id),
+    room_id: Number(form.room_id),
     expected_checkout_time: toRFC3339(form.expected_checkout_time)
   }
   if (form.order_id) body.order_id = Number(form.order_id)
-  if (form.room_id) body.room_id = Number(form.room_id)
 
   try {
     await api.createCheckin(body)
@@ -78,7 +100,11 @@ async function runAction(action, message) {
   }
 }
 
-onMounted(load)
+onMounted(() => {
+  load()
+  loadGuests()
+  loadRooms()
+})
 </script>
 
 <template>
@@ -143,16 +169,26 @@ onMounted(load)
           <input v-model.trim="form.order_id" />
         </label>
         <label class="field">
-          <span>住客用户 ID</span>
-          <input v-model.trim="form.user_id" required />
+          <span>住客</span>
+          <select v-model="form.user_id" required>
+            <option value="" disabled>请选择住户</option>
+            <option v-for="guest in guests" :key="guest.id" :value="guest.user_id">
+              {{ guest.name || guest.user?.username || guest.user_id }} ({{ guest.user?.username || guest.user_id }})
+            </option>
+          </select>
         </label>
         <label class="field">
-          <span>房间 ID（可选）</span>
-          <input v-model.trim="form.room_id" />
+          <span>房间</span>
+          <select v-model="form.room_id" required>
+            <option value="" disabled>请选择房间</option>
+            <option v-for="room in rooms" :key="room.id" :value="room.id">
+              {{ room.room_number }} - {{ room.type || '标准' }} ({{ room.status === 'vacant' ? '空闲' : room.status }})
+            </option>
+          </select>
         </label>
         <label class="field">
           <span>预计退房时间</span>
-          <input v-model="form.expected_checkout_time" type="datetime-local" required />
+          <input v-model="form.expected_checkout_time" type="datetime-local" :min="today" required />
         </label>
         <button class="primary-button" type="submit">办理入住</button>
       </div>

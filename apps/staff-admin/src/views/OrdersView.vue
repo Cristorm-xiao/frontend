@@ -13,6 +13,8 @@ const error = ref('')
 const success = ref('')
 const editForm = reactive({ code: '', check_in_date: '', check_out_date: '', total_price: 0, status: 'pending' })
 
+const today = new Date().toISOString().split('T')[0]
+
 function tone(status) {
   if (status === 'confirmed') return 'good'
   if (status === 'cancelled') return 'danger'
@@ -187,11 +189,11 @@ onMounted(load)
         </label>
         <label class="field">
           <span>入住日期</span>
-          <input v-model="editForm.check_in_date" type="date" />
+          <input v-model="editForm.check_in_date" type="date" :min="today" />
         </label>
         <label class="field">
           <span>退房日期</span>
-          <input v-model="editForm.check_out_date" type="date" />
+          <input v-model="editForm.check_out_date" type="date" :min="editForm.check_in_date || today" />
         </label>
         <label class="field">
           <span>总价</span>

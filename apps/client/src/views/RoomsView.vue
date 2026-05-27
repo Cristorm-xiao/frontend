@@ -20,6 +20,8 @@ const booking = reactive({
   check_out_date: ''
 })
 
+const today = new Date().toISOString().split('T')[0]
+
 const filteredRooms = computed(() =>
   rooms.value.filter((room) => {
     const byType = !filters.type || room.type === filters.type
@@ -157,11 +159,11 @@ onMounted(load)
       <div class="form-grid">
         <label class="field">
           <span>入住日期</span>
-          <input v-model="booking.check_in_date" type="date" required />
+          <input v-model="booking.check_in_date" type="date" :min="today" required />
         </label>
         <label class="field">
           <span>退房日期</span>
-          <input v-model="booking.check_out_date" type="date" required />
+          <input v-model="booking.check_out_date" type="date" :min="booking.check_in_date || today" required />
         </label>
         <label class="field">
           <span>入住人数</span>
