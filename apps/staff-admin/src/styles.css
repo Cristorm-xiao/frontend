@@ -242,6 +242,15 @@ button {
   color: #146c5f;
 }
 
+.primary-button:disabled,
+.ghost-button:disabled,
+.danger-button:disabled,
+.small-button:disabled,
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .button-row {
   display: flex;
   flex-wrap: wrap;

@@ -1,7 +1,7 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { RefreshCw, Trash2 } from 'lucide-vue-next'
-import { api, checkinStatusLabel, formatDateTime, pageList } from '@shared'
+import { api, checkinStatusLabel, formatDateTime, formatMoney, pageList, roomStatusLabel, roomStatuses, roomTypeLabel } from '@shared'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 
@@ -20,6 +20,13 @@ const form = reactive({
 })
 
 const today = new Date().toISOString().slice(0, 16)
+
+const roomFilter = ref('')
+
+const filteredRooms = computed(() => {
+  if (!roomFilter.value) return rooms.value
+  return rooms.value.filter((room) => room.status === roomFilter.value)
+})
 
 function tone(status) {
   return status === 'active' ? 'good' : 'neutral'
@@ -74,6 +81,7 @@ async function createCheckin() {
     success.value = '入住已办理。'
     Object.assign(form, { order_id: '', user_id: '', room_id: '', expected_checkout_time: '' })
     await load()
+    await loadRooms()
   } catch (err) {
     error.value = err.message || '办理入住失败'
   }
@@ -95,6 +103,7 @@ async function runAction(action, message) {
     await action()
     success.value = message
     await load()
+    await loadRooms()
   } catch (err) {
     error.value = err.message || '操作失败'
   }
@@ -193,5 +202,30 @@ onMounted(() => {
         <button class="primary-button" type="submit">办理入住</button>
       </div>
     </form>
+  </section>
+
+  <section class="card" style="margin-top: 20px;">
+    <div class="page-header">
+      <h2>房间状态</h2>
+      <div class="field" style="min-width: 160px;">
+        <select v-model="roomFilter">
+          <option value="">全部</option>
+          <option v-for="s in roomStatuses" :key="s.value" :value="s.value">
+            {{ s.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div v-if="filteredRooms.length" class="grid" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+      <div v-for="room in filteredRooms" :key="room.id" class="card">
+        <h3>{{ room.room_number }}</h3>
+        <p>类型：{{ roomTypeLabel(room.type) }}</p>
+        <p>容量：{{ room.capacity }} 人</p>
+        <p>楼层：{{ room.floor }}</p>
+        <p>价格：{{ formatMoney(room.price) }}</p>
+        <p>状态：<StatusBadge :tone="room.status === 'vacant' ? 'good' : room.status === 'reserved' ? 'warn' : 'neutral'">{{ roomStatusLabel(room.status) }}</StatusBadge></p>
+      </div>
+    </div>
+    <div v-else class="empty">暂无房间</div>
   </section>
 </template>
