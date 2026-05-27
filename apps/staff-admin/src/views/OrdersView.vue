@@ -4,6 +4,7 @@ import { RefreshCw, Trash2 } from 'lucide-vue-next'
 import { api, formatMoney, orderStatusLabel, orderStatuses, pageList } from '@shared'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
+import { runActionWithFeedback } from '@/utils/actionFeedback.js'
 
 const orders = ref([])
 const cancelRequests = ref([])
@@ -40,8 +41,11 @@ function isEditableStatus(status) {
   return editableOrderStatuses.some((item) => item.value === status)
 }
 
-async function load() {
-  error.value = ''
+async function load(options = {}) {
+  if (!options.preserveFeedback) {
+    error.value = ''
+    success.value = ''
+  }
   try {
     const [orderPayload, cancelPayload] = await Promise.all([
       api.listOrders({ page: page.value, page_size: 10 }),
@@ -90,16 +94,14 @@ async function remove(order) {
 }
 
 async function runAction(action, message) {
-  error.value = ''
-  success.value = ''
-  try {
-    await action()
-    success.value = message
-    await load()
-  } catch (err) {
-    error.value = err.message || '操作失败'
-    try { await load() } catch {}
-  }
+  await runActionWithFeedback({
+    action,
+    reload: load,
+    setError: (value) => { error.value = value },
+    setSuccess: (value) => { success.value = value },
+    successMessage: message,
+    fallbackErrorMessage: '操作失败'
+  })
 }
 
 onMounted(load)
