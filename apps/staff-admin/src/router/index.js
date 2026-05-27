@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { session } from '@/stores/session'
+import AppealsView from '@/views/AppealsView.vue'
 import AuditLogsView from '@/views/AuditLogsView.vue'
 import CheckinsView from '@/views/CheckinsView.vue'
 import DashboardView from '@/views/DashboardView.vue'
@@ -24,6 +25,7 @@ const router = createRouter({
     { path: '/waiters', component: PeopleView, props: { type: 'waiters' }, meta: { admin: true } },
     { path: '/waiter-work', component: WaiterWorkView },
     { path: '/notifications', component: NotificationsView },
+    { path: '/appeals', component: AppealsView, meta: { staff: true } },
     { path: '/audit-logs', component: AuditLogsView, meta: { staff: true } }
   ]
 })

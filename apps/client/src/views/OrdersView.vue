@@ -96,9 +96,12 @@ onMounted(load)
             <td>{{ formatMoney(order.total_price) }}</td>
             <td><StatusBadge :tone="orderTone(order.status)">{{ orderStatusLabel(order.status) }}</StatusBadge></td>
             <td>
-              <button class="small-button" type="button" :disabled="!canCancel(order)" @click="pickCancel(order)">
-                {{ cancelActionLabel(order) }}
-              </button>
+              <div class="button-row">
+                <button class="small-button" type="button" :disabled="!canCancel(order)" @click="pickCancel(order)">
+                  {{ cancelActionLabel(order) }}
+                </button>
+                <RouterLink class="small-button" :to="{ path: '/appeals', query: { order_id: order.id } }">申诉</RouterLink>
+              </div>
             </td>
           </tr>
         </tbody>

@@ -103,7 +103,11 @@ export const api = {
   unreadCount: () => request('/notifications/unread'),
   markNotificationRead: (id) => request(`/notifications/${id}/read`, { method: 'PUT' }),
 
-  listAuditLogs: (query) => request('/audit-logs', { query })
+  listAuditLogs: (query) => request('/audit-logs', { query }),
+
+  submitAppeal: (code, body) => request(`/orders/${code}/appeal`, { method: 'POST', body }),
+  listAppeals: (query) => request('/appeals', { query }),
+  reviewAppeal: (code, body) => request(`/appeals/${code}/review`, { method: 'POST', body })
 }
 
 export function createNotificationSocket(token, onMessage) {

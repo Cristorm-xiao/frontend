@@ -6,6 +6,7 @@ import {
   FileClock,
   Home,
   LogOut,
+  MessageSquareDot,
   Shield,
   UserCog,
   Users,
@@ -29,6 +30,7 @@ const navItems = computed(() => [
   { to: '/waiters', label: '服务员', icon: ConciergeBell, show: session.isAdmin },
   { to: '/waiter-work', label: '服务任务', icon: ConciergeBell, show: true },
   { to: '/notifications', label: '通知', icon: Bell, show: true },
+  { to: '/appeals', label: '申诉', icon: MessageSquareDot, show: session.isStaff },
   { to: '/audit-logs', label: '审计', icon: FileClock, show: session.isStaff }
 ])
 

@@ -1,5 +1,5 @@
 <script setup>
-import { Bell, BedDouble, CalendarCheck, ConciergeBell, Home, LogOut, UserRound } from 'lucide-vue-next'
+import { Bell, BedDouble, CalendarCheck, ConciergeBell, Home, LogOut, MessageSquareDot, UserRound } from 'lucide-vue-next'
 import { api } from '@shared'
 import { clearSession, session } from '@/stores/session'
 import { useRouter } from 'vue-router'
@@ -20,6 +20,7 @@ const navItems = [
   { to: '/', label: '概览', icon: Home },
   { to: '/rooms', label: '订房', icon: BedDouble },
   { to: '/orders', label: '订单', icon: CalendarCheck },
+  { to: '/appeals', label: '申诉', icon: MessageSquareDot },
   { to: '/service', label: '服务', icon: ConciergeBell },
   { to: '/notifications', label: '通知', icon: Bell },
   { to: '/profile', label: '账户', icon: UserRound }

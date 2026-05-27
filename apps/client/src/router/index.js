@@ -7,6 +7,7 @@ import OrdersView from '@/views/OrdersView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import RoomsView from '@/views/RoomsView.vue'
+import AppealsView from '@/views/AppealsView.vue'
 import ServiceView from '@/views/ServiceView.vue'
 
 const router = createRouter({
@@ -17,6 +18,7 @@ const router = createRouter({
     { path: '/', name: 'dashboard', component: DashboardView },
     { path: '/rooms', name: 'rooms', component: RoomsView },
     { path: '/orders', name: 'orders', component: OrdersView },
+    { path: '/appeals', name: 'appeals', component: AppealsView },
     { path: '/service', name: 'service', component: ServiceView },
     { path: '/notifications', name: 'notifications', component: NotificationsView },
     { path: '/profile', name: 'profile', component: ProfileView }
