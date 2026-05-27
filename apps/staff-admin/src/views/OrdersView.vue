@@ -98,6 +98,7 @@ async function runAction(action, message) {
     await load()
   } catch (err) {
     error.value = err.message || '操作失败'
+    try { await load() } catch {}
   }
 }
 
