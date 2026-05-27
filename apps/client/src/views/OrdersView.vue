@@ -38,6 +38,14 @@ function pickCancel(order) {
   cancelForm.reason = ''
 }
 
+function canCancel(order) {
+  return order.status === 'pending' || order.status === 'confirmed'
+}
+
+function cancelActionLabel(order) {
+  return order.status === 'confirmed' ? '申请取消' : '取消订单'
+}
+
 async function cancelOrder() {
   error.value = ''
   success.value = ''
@@ -88,8 +96,8 @@ onMounted(load)
             <td>{{ formatMoney(order.total_price) }}</td>
             <td><StatusBadge :tone="orderTone(order.status)">{{ orderStatusLabel(order.status) }}</StatusBadge></td>
             <td>
-              <button class="small-button" type="button" :disabled="order.status !== 'pending'" @click="pickCancel(order)">
-                取消
+              <button class="small-button" type="button" :disabled="!canCancel(order)" @click="pickCancel(order)">
+                {{ cancelActionLabel(order) }}
               </button>
             </td>
           </tr>

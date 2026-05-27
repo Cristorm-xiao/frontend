@@ -12,6 +12,7 @@ const total = ref(0)
 const error = ref('')
 const success = ref('')
 const editForm = reactive({ code: '', check_in_date: '', check_out_date: '', total_price: 0, status: 'pending' })
+const editableOrderStatuses = orderStatuses.filter((status) => !['cancel_requested', 'cancelled'].includes(status.value))
 
 const today = new Date().toISOString().split('T')[0]
 
@@ -35,6 +36,10 @@ function clearEdit() {
   Object.assign(editForm, { code: '', check_in_date: '', check_out_date: '', total_price: 0, status: 'pending' })
 }
 
+function isEditableStatus(status) {
+  return editableOrderStatuses.some((item) => item.value === status)
+}
+
 async function load() {
   error.value = ''
   try {
@@ -56,22 +61,24 @@ async function confirm(order) {
 }
 
 async function approveCancel(order) {
-  await runAction(() => api.updateOrder(order.id, { status: 'cancelled' }), '取消申请已通过。')
+  await runAction(() => api.approveCancelOrder(order.id), '取消申请已通过。')
 }
 
 async function rejectCancel(order) {
-  await runAction(() => api.updateOrder(order.id, { status: 'pending' }), '取消申请已驳回。')
+  await runAction(() => api.rejectCancelOrder(order.id, {}), '取消申请已驳回。')
 }
 
 async function saveEdit() {
+  const body = {
+    check_in_date: editForm.check_in_date,
+    check_out_date: editForm.check_out_date,
+    total_price: Number(editForm.total_price)
+  }
+  if (isEditableStatus(editForm.status)) {
+    body.status = editForm.status
+  }
   await runAction(
-    () =>
-      api.updateOrder(editForm.code, {
-        check_in_date: editForm.check_in_date,
-        check_out_date: editForm.check_out_date,
-        total_price: Number(editForm.total_price),
-        status: editForm.status
-      }),
+    () => api.updateOrder(editForm.code, body),
     '订单已更新。'
   )
   clearEdit()
@@ -202,7 +209,7 @@ onMounted(load)
         <label class="field">
           <span>状态</span>
           <select v-model="editForm.status">
-            <option v-for="status in orderStatuses" :key="status.value" :value="status.value">{{ status.label }}</option>
+            <option v-for="status in editableOrderStatuses" :key="status.value" :value="status.value">{{ status.label }}</option>
           </select>
         </label>
         <button class="primary-button" type="submit">保存订单</button>
