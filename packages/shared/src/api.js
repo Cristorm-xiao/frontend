@@ -106,7 +106,7 @@ export const api = {
   listAuditLogs: (query) => request('/audit-logs', { query }),
 
   submitAppeal: (code, body) => request(`/orders/${code}/appeal`, { method: 'POST', body }),
-  listAppeals: (query) => request('/appeals', { query }),
+  listAppeals: (query) => request('/appeals/my', { query }),
   reviewAppeal: (code, body) => request(`/appeals/${code}/review`, { method: 'POST', body })
 }
 
